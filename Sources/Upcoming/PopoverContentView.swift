@@ -60,17 +60,18 @@ struct PopoverContentView: View {
             } label: {
                 Image(systemName: manager.isLoading ? "arrow.clockwise" : "arrow.clockwise")
                     .rotationEffect(.degrees(manager.isLoading ? 360 : 0))
-                    .animation(manager.isLoading
-                               ? .linear(duration: 1).repeatForever(autoreverses: false)
-                               : .default,
-                               value: manager.isLoading)
+                    .animation(
+                        manager.isLoading
+                            ? .linear(duration: 1).repeatForever(autoreverses: false)
+                            : .default,
+                        value: manager.isLoading)
             }
             .buttonStyle(.borderless)
             .help("Refresh")
             .disabled(manager.isLoading)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Permission states
@@ -108,7 +109,10 @@ struct PopoverContentView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             Button("Open System Settings") {
-                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars") {
+                if let url = URL(
+                    string:
+                        "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars")
+                {
                     NSWorkspace.shared.open(url)
                 }
             }
@@ -119,7 +123,7 @@ struct PopoverContentView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "calendar")
+            Image(systemName: "calendar.day.timeline.leading")
                 .font(.system(size: 30))
                 .foregroundStyle(.secondary)
             Text("Nothing coming up")
@@ -140,12 +144,17 @@ struct PopoverContentView: View {
             VStack(alignment: .leading, spacing: 0) {
                 if let next = manager.nextUp {
                     nextUpBanner(event: next, now: clock.now)
-                    Divider().padding(.leading, 14)
+                    Divider().padding(.leading, 12)
                 }
 
-                section(title: "Today", subtitle: todaySubtitle, events: manager.today, now: clock.now)
-                section(title: "Tomorrow", subtitle: tomorrowSubtitle, events: manager.tomorrow, now: clock.now)
-                section(title: "This Week", subtitle: thisWeekSubtitle, events: manager.restOfWeek, now: clock.now)
+                section(
+                    title: "Today", subtitle: todaySubtitle, events: manager.today, now: clock.now)
+                section(
+                    title: "Tomorrow", subtitle: tomorrowSubtitle, events: manager.tomorrow,
+                    now: clock.now)
+                section(
+                    title: "This Week", subtitle: thisWeekSubtitle, events: manager.restOfWeek,
+                    now: clock.now)
             }
             .padding(.vertical, 6)
         }
@@ -153,10 +162,10 @@ struct PopoverContentView: View {
 
     private func nextUpBanner(event: CalendarEvent, now: Date) -> some View {
         let isNow = now >= event.startDate && now < event.endDate
-        return HStack(alignment: .top, spacing: 10) {
-            RoundedRectangle(cornerRadius: 3)
+        return HStack(alignment: .top, spacing: 8) {
+            RoundedRectangle(cornerRadius: 4)
                 .fill(Color(cgColor: event.calendarColor))
-                .frame(width: 3)
+                .frame(width: 6)
                 .padding(.vertical, 2)
             VStack(alignment: .leading, spacing: 2) {
                 Text(isNow ? "Happening now" : "Up next")
@@ -168,11 +177,15 @@ struct PopoverContentView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .lineLimit(2)
                 HStack(spacing: 6) {
-                    Text(event.isAllDay ? "all day"
-                         : EventFormatting.timeRange(start: event.startDate, end: event.endDate))
+                    Text(
+                        event.isAllDay
+                            ? "all day"
+                            : EventFormatting.timeRange(start: event.startDate, end: event.endDate))
                     if !isNow {
                         Text("·")
-                        Text(EventFormatting.countdown(to: event.startDate, isAllDay: event.isAllDay, now: now))
+                        Text(
+                            EventFormatting.countdown(
+                                to: event.startDate, isAllDay: event.isAllDay, now: now))
                     }
                 }
                 .font(.system(size: 11))
@@ -181,36 +194,37 @@ struct PopoverContentView: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(isNow ? Color.accentColor.opacity(0.08) : Color.clear)
     }
 
-    private func section(title: String, subtitle: String, events: [CalendarEvent], now: Date) -> some View {
+    private func section(title: String, subtitle: String, events: [CalendarEvent], now: Date)
+        -> some View
+    {
         Group {
             if !events.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .firstTextBaseline) {
                         Text(title)
                             .font(.system(size: 12, weight: .bold))
                             .textCase(.uppercase)
                             .tracking(0.5)
                         Text(subtitle)
-                            .font(.system(size: 10))
+                            .font(.system(size: 8))
                             .foregroundStyle(.tertiary)
                         Spacer()
                         Text("\(events.count)")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(.tertiary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 1)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
                             .background(Capsule().fill(Color.secondary.opacity(0.12)))
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.top, 10)
-                    .padding(.bottom, 2)
+                    .padding(.horizontal, 12)
+                    .padding(.top, 8)
 
-                    VStack(spacing: 1) {
+                    VStack(spacing: 0) {
                         ForEach(events) { ev in
                             EventRowView(event: ev, now: now)
                         }
@@ -252,8 +266,8 @@ struct PopoverContentView: View {
             .foregroundStyle(.secondary)
             .help("Quit Upcoming")
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Auto refresh

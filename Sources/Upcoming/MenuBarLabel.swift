@@ -34,8 +34,9 @@ struct MenuBarLabel: View {
     }
 
     private var glyph: String {
-        guard let next else { return "calendar" }
-        return (clock.now >= next.startDate && clock.now < next.endDate) ? "circle.fill" : "calendar"
+        guard let next else { return "calendar.day.timeline.leading" }
+        return (clock.now >= next.startDate && clock.now < next.endDate)
+            ? "circle.fill" : "calendar.day.timeline.leading"
     }
 
     private func shortLabel(for event: CalendarEvent) -> String {
@@ -43,7 +44,8 @@ struct MenuBarLabel: View {
         if isNow {
             return "● \(truncate(event.title, to: 14))"
         }
-        let countdown = EventFormatting.countdown(to: event.startDate, isAllDay: event.isAllDay, now: clock.now)
+        let countdown = EventFormatting.countdown(
+            to: event.startDate, isAllDay: event.isAllDay, now: clock.now)
         return "\(truncate(event.title, to: 12)) · \(countdown)"
     }
 

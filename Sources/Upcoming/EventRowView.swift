@@ -1,5 +1,5 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct EventRowView: View {
     let event: CalendarEvent
@@ -9,7 +9,7 @@ struct EventRowView: View {
     private var isUpcomingLive: Bool { event.startDate > now }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .center, spacing: 8) {
             // Time block (compact)
             VStack(alignment: .leading, spacing: 2) {
                 Text(timeText)
@@ -23,17 +23,17 @@ struct EventRowView: View {
                         .monospacedDigit()
                 }
             }
-            .frame(width: 52, alignment: .leading)
+            .frame(width: 48, alignment: .leading)
 
             // Calendar color accent bar
             RoundedRectangle(cornerRadius: 2)
                 .fill(Color(cgColor: event.calendarColor))
-                .frame(width: 3)
+                .frame(width: 4)
                 .padding(.vertical, 2)
 
             // Title + meta
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
                     Text(event.title)
                         .font(.system(size: 13, weight: .semibold))
                         .lineLimit(2)
@@ -53,7 +53,7 @@ struct EventRowView: View {
                 }
 
                 if let location = event.location {
-                    HStack(spacing: 3) {
+                    HStack(spacing: 4) {
                         Image(systemName: "mappin")
                             .font(.system(size: 9))
                         Text(location)
@@ -64,13 +64,15 @@ struct EventRowView: View {
                 }
 
                 if !event.attendees.isEmpty {
-                    HStack(spacing: 3) {
+                    HStack(spacing: 4) {
                         Image(systemName: "person.2")
                             .font(.system(size: 9))
-                        Text(event.attendees.count <= 2
-                             ? event.attendees.joined(separator: ", ")
-                             : "\(event.attendees.prefix(2).joined(separator: ", ")) +\(event.attendees.count - 2)")
-                            .lineLimit(1)
+                        Text(
+                            event.attendees.count <= 2
+                                ? event.attendees.joined(separator: ", ")
+                                : "\(event.attendees.prefix(2).joined(separator: ", ")) +\(event.attendees.count - 2)"
+                        )
+                        .lineLimit(1)
                     }
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -81,18 +83,21 @@ struct EventRowView: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(Color.accentColor)
                 } else if isUpcomingLive {
-                    Text(EventFormatting.countdown(to: event.startDate, isAllDay: event.isAllDay, now: now))
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.tertiary)
+                    Text(
+                        EventFormatting.countdown(
+                            to: event.startDate, isAllDay: event.isAllDay, now: now)
+                    )
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.tertiary)
                 }
             }
 
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 5)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 12)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            Rectangle()
                 .fill(isNowLive ? Color.accentColor.opacity(0.08) : Color.clear)
         )
         .contentShape(Rectangle())
