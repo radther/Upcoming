@@ -1,8 +1,9 @@
 import EventKit
 import Foundation
+import SwiftUI
 
 /// Wraps a calendar event with the derived fields the UI needs.
-struct CalendarEvent: Identifiable, Hashable {
+struct CalendarEvent: Identifiable, Hashable, Sendable {
     let id: String
     let title: String
     let location: String?
@@ -11,7 +12,7 @@ struct CalendarEvent: Identifiable, Hashable {
     let startDate: Date
     let endDate: Date
     let isAllDay: Bool
-    let calendarColor: CGColor
+    let calendarColor: Color
     let calendarTitle: String
     let attendees: [String]
     let hasConferenceURL: Bool
@@ -117,12 +118,20 @@ final class CalendarManager: ObservableObject {
             startDate: ev.startDate,
             endDate: ev.endDate,
             isAllDay: ev.isAllDay,
-            calendarColor: ev.calendar.cgColor,
+            calendarColor: Self.color(from: ev.calendar.cgColor),
             calendarTitle: ev.calendar.title,
             attendees: attendeeNames,
             hasConferenceURL: conferenceURL(from: ev) != nil,
             hasConflict: hasConflict
         )
+    }
+
+    /// Convert an EventKit `CGColor` to SwiftUI `Color`, falling back to
+    /// `.accentColor` for exotic colorspaces where `Color(cgColor:)` could
+    /// yield an unusable result.
+    private static func color(from cgColor: CGColor?) -> Color {
+        guard let cgColor, cgColor.numberOfComponents > 0 else { return .accentColor }
+        return Color(cgColor)
     }
 
     private func conferenceURL(from ev: EKEvent) -> URL? {

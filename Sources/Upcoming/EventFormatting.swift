@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 enum EventFormatting {
     static let timeOnly: DateFormatter = {
         let f = DateFormatter()

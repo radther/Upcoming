@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
@@ -6,11 +6,15 @@ let package = Package(
     platforms: [
         .macOS(.v14)
     ],
+    products: [
+        .executable(name: "Upcoming", targets: ["Upcoming"])
+    ],
     targets: [
         .executableTarget(
             name: "Upcoming",
             path: "Sources/Upcoming",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist", "Upcoming.entitlements"]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

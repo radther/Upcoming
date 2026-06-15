@@ -30,7 +30,7 @@ struct PopoverContentView: View {
         .frame(width: 380, height: 480)
         .background(.regularMaterial)
         .onAppear {
-            Task { await manager.refresh() }
+            Task { @MainActor in await manager.refresh() }
             scheduleAutoRefresh()
         }
         .onDisappear { refreshTask?.cancel() }
@@ -56,7 +56,7 @@ struct PopoverContentView: View {
             }
             Spacer()
             Button {
-                Task { await manager.refresh() }
+                Task { @MainActor in await manager.refresh() }
             } label: {
                 Image(systemName: manager.isLoading ? "arrow.clockwise" : "arrow.clockwise")
                     .rotationEffect(.degrees(manager.isLoading ? 360 : 0))
@@ -89,7 +89,7 @@ struct PopoverContentView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             Button("Continue") {
-                Task { await manager.requestAccess() }
+                Task { @MainActor in await manager.requestAccess() }
             }
             .buttonStyle(.borderedProminent)
         }
@@ -164,7 +164,7 @@ struct PopoverContentView: View {
         let isNow = now >= event.startDate && now < event.endDate
         return HStack(alignment: .top, spacing: 8) {
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color(cgColor: event.calendarColor))
+                .fill(event.calendarColor)
                 .frame(width: 6)
                 .padding(.vertical, 2)
             VStack(alignment: .leading, spacing: 2) {
@@ -274,7 +274,7 @@ struct PopoverContentView: View {
 
     private func scheduleAutoRefresh() {
         refreshTask?.cancel()
-        refreshTask = Task {
+        refreshTask = Task { @MainActor in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
                 if Task.isCancelled { break }

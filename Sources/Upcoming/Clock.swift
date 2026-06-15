@@ -17,8 +17,16 @@ final class Clock: ObservableObject {
         reschedule()
     }
 
-    deinit {
+    /// Invalidate the timer for programmatic teardown.
+    ///
+    /// `deinit` is intentionally omitted: `Clock` is held by `@StateObject` for
+    /// the app's entire lifetime so it never runs in practice, and calling
+    /// `Timer.invalidate()` from the arbitrary thread where `deinit` could fire
+    /// is a hazard. The one-shot timer also self-invalidates after firing, so
+    /// orphaned timers aren't a concern.
+    func stop() {
         timer?.invalidate()
+        timer = nil
     }
 
     /// Advance `now` and arm the next fire for the upcoming minute boundary.

@@ -27,7 +27,7 @@ struct EventRowView: View {
 
             // Calendar color accent bar
             RoundedRectangle(cornerRadius: 2)
-                .fill(Color(cgColor: event.calendarColor))
+                .fill(event.calendarColor)
                 .frame(width: 4)
                 .padding(.vertical, 2)
 
