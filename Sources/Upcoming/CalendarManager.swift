@@ -15,8 +15,10 @@ struct CalendarEvent: Identifiable, Hashable, Sendable {
     let calendarColor: Color
     let calendarTitle: String
     let attendees: [String]
-    let hasConferenceURL: Bool
+    let linkURL: URL?
     let hasConflict: Bool
+
+    var hasLink: Bool { linkURL != nil }
 
     /// How many minutes until this event starts (negative if in progress).
     var minutesUntilStart: Int {
@@ -121,7 +123,7 @@ final class CalendarManager: ObservableObject {
             calendarColor: Self.color(from: ev.calendar.cgColor),
             calendarTitle: ev.calendar.title,
             attendees: attendeeNames,
-            hasConferenceURL: conferenceURL(from: ev) != nil,
+            linkURL: linkURL(from: ev),
             hasConflict: hasConflict
         )
     }
@@ -134,15 +136,23 @@ final class CalendarManager: ObservableObject {
         return Color(cgColor)
     }
 
-    private func conferenceURL(from ev: EKEvent) -> URL? {
+    private func linkURL(from ev: EKEvent) -> URL? {
+        // EventKit exposes no structured "conference" field for read access, so
+        // we extract the URL heuristically: prefer the event's URL field, then
+        // the first http(s) link in the notes, then in the location. Whatever
+        // it turns out to be — a call, a doc, a project page — that's what the
+        // Open button surfaces.
         if let u = ev.url { return u }
-        if let notes = ev.notes,
-           let range = notes.range(of: #"https?://[^\s)]+"#, options: .regularExpression)
-        {
-            let candidate = String(notes[range])
-            return URL(string: candidate)
-        }
+        if let u = Self.firstURL(in: ev.notes) { return u }
+        if let u = Self.firstURL(in: ev.location) { return u }
         return nil
+    }
+
+    private static func firstURL(in text: String?) -> URL? {
+        guard let text, !text.isEmpty,
+              let range = text.range(of: #"https?://[^\s)]+"#, options: .regularExpression)
+        else { return nil }
+        return URL(string: String(text[range]))
     }
 
     private func markConflicts(_ sorted: [CalendarEvent]) -> [CalendarEvent] {
@@ -178,7 +188,7 @@ final class CalendarManager: ObservableObject {
             calendarColor: ev.calendarColor,
             calendarTitle: ev.calendarTitle,
             attendees: ev.attendees,
-            hasConferenceURL: ev.hasConferenceURL,
+            linkURL: ev.linkURL,
             hasConflict: hasConflict
         )
     }

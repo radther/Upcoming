@@ -44,12 +44,6 @@ struct EventRowView: View {
                             .foregroundStyle(.orange)
                             .help("Overlaps with another event")
                     }
-                    if event.hasConferenceURL {
-                        Image(systemName: "video")
-                            .font(.system(size: 9))
-                            .foregroundStyle(.secondary)
-                            .help("Has a meeting link")
-                    }
                 }
 
                 if let location = event.location {
@@ -93,6 +87,18 @@ struct EventRowView: View {
             }
 
             Spacer(minLength: 0)
+
+            if let url = event.linkURL {
+                Button {
+                    NSWorkspace.shared.open(url)
+                } label: {
+                    Label("Open", systemImage: "arrow.up.right.square")
+                        .labelStyle(.titleAndIcon)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .help("Open link")
+            }
         }
         .padding(.vertical, 4)
         .padding(.horizontal, 12)
@@ -102,6 +108,14 @@ struct EventRowView: View {
         )
         .contentShape(Rectangle())
         .contextMenu {
+            if let url = event.linkURL {
+                Button {
+                    NSWorkspace.shared.open(url)
+                } label: {
+                    Label("Open link", systemImage: "arrow.up.right.square")
+                }
+                Divider()
+            }
             Button("Copy event title") {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(event.title, forType: .string)
