@@ -3,7 +3,7 @@
 # then ad-hoc codesigns so it can be launched and prompt for Calendar TCC.
 set -euo pipefail
 
-ROOT="/Users/toomosin/Developer/Upcoming"
+ROOT="."
 BIN="$ROOT/.build/release/Upcoming"
 APP="$ROOT/build/Upcoming.app"
 
