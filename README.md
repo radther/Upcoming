@@ -28,15 +28,14 @@ A minimal SwiftUI menu bar app for macOS that hooks into the system calendar (Ev
 git clone git@github.com:radther/Upcoming.git
 cd Upcoming
 
-# Build the release binary
-swift build -c release
+# Make the scripts executable (first time only)
+chmod +x build.sh bundle.sh
 
-# Assemble and ad-hoc codesign the .app bundle
-chmod +x bundle.sh
-./bundle.sh
+# Build, bundle, and install to /Applications
+./build.sh
 
 # Launch
-open build/Upcoming.app
+open /Applications/Upcoming.app
 ```
 
 ## How It Works
@@ -51,7 +50,9 @@ open build/Upcoming.app
 ```
 Upcoming/
 ├── Package.swift                  # SwiftPM package definition (macOS 14+)
-├── bundle.sh                      # Builds .app bundle from swift build output
+├── build.sh                       # Builds, bundles, and installs to /Applications
+├── bundle.sh                      # Assembles .app bundle from swift build output
+├── Upcoming@1x_Icon.png           # App icon source image
 ├── README.md
 └── Sources/Upcoming/
     ├── UpcomingApp.swift          # @main entry point, MenuBarExtra scene
@@ -68,9 +69,9 @@ Upcoming/
 ## Rebuilding After Changes
 
 ```bash
-swift build -c release && ./bundle.sh
+./build.sh
 # Then relaunch:
-open build/Upcoming.app
+open /Applications/Upcoming.app
 ```
 
 ## License
